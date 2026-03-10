@@ -104,7 +104,7 @@ html,body{height:100%;overflow:hidden}
 .gt{border-collapse:collapse;min-width:100%}
 .gt th{font-size:9px;font-weight:600;color:var(--tx3);padding:5px 2px 3px;text-align:center;border-right:1px solid var(--line);min-width:28px;position:sticky;top:0;background:var(--s1);z-index:2;font-family:'DM Mono',monospace}
 .gt th.th-tdy{color:var(--amber);background:var(--amberb)}.gt th.th-sun{color:var(--red)}.gt th.th-sat{color:var(--blue)}
-.gt td.g-lbl{font-size:11px;font-weight:600;color:var(--tx2);padding:0 12px;height:28px;white-space:nowrap;position:sticky;left:0;background:var(--s1);z-index:1;border-right:1px solid var(--line);min-width:130px;max-width:170px;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.gt td.g-lbl{font-size:11px;font-weight:600;color:var(--tx2);padding:0 10px;height:28px;white-space:nowrap;position:sticky;left:0;background:var(--s1);z-index:1;border-right:1px solid var(--line);width:120px;min-width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 .gt td.g-lbl:hover{color:var(--amber)}
 .gt tr{border-bottom:1px solid var(--line)}
 .gt td.g-cell{height:28px;border-right:1px solid var(--line);padding:0 1px;text-align:center;vertical-align:middle;cursor:pointer;transition:.08s;min-width:28px}
@@ -268,6 +268,40 @@ html,body{height:100%;overflow:hidden}
 .mbtn-p{background:var(--amber);color:#fff}.mbtn-p:hover{background:var(--amberd)}
 .mbtn-g{background:var(--s2);color:var(--tx2);border:1px solid var(--line);margin-top:6px}.mbtn-g:hover{background:var(--s3)}
 .mbtn-d{background:var(--redb);color:var(--red);border:1px solid rgba(196,48,48,.2);margin-top:6px}.mbtn-d:hover{background:rgba(196,48,48,.18)}
+@media (max-width:640px){
+  :root{--sb:80vw;}
+  .pc-shell{position:relative;}
+  .pc-sidebar{
+    position:fixed;left:0;top:0;bottom:0;z-index:200;
+    transform:translateX(-100%);transition:transform .25s cubic-bezier(.22,1,.36,1);
+    box-shadow:4px 0 24px rgba(0,0,0,.18);
+  }
+  .pc-sidebar.sp-open{transform:translateX(0);}
+  .pc-sb-overlay{display:none;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.35);}
+  .pc-sb-overlay.sp-open{display:block;}
+  .pc-main{width:100%;min-width:0;}
+  .pc-top{padding:0 10px;gap:6px;}
+  .pc-logo{font-size:15px;}
+  .uname-lbl{display:none;}
+  .pc-cfg-btn{font-size:10px;padding:0 7px;}
+  .pc-gantt-hd{padding:7px 10px 5px;gap:8px;flex-wrap:wrap;}
+  .gantt-mname{min-width:60px;font-size:11px;}
+  .xl-btn{font-size:9px;padding:2px 7px;}
+  /* サイドバー開閉ボタン */
+  .sp-menu-btn{
+    display:flex;align-items:center;justify-content:center;
+    width:32px;height:32px;background:var(--amber);color:#fff;
+    border:none;font-size:18px;cursor:pointer;flex-shrink:0;
+  }
+  /* 詳細パネルのタブ */
+  .pc-tabs{overflow-x:auto;scrollbar-width:none;}
+  .pc-tabs::-webkit-scrollbar{display:none;}
+  .pc-tab{font-size:9px;padding:0 10px;}
+}
+@media (min-width:641px){
+  .sp-menu-btn{display:none;}
+  .pc-sb-overlay{display:none!important;}
+}
 @media print{.pc-sidebar,.pc-top,.pc-tabs,.pc-stats{display:none!important}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
@@ -277,7 +311,7 @@ html,body{height:100%;overflow:hidden}
 <body>
 <div id="pc-root" style="display:flex;flex-direction:column;height:100vh">
   <div class="pc-top">
-    <div class="pc-logo">KMAP</div>
+    <button class="sp-menu-btn" id="sp-menu-btn">☰</button><div class="pc-logo">KMAP</div>
     <div class="pc-status">
       <div class="sdot sdot-off" id="pc-sdot"></div>
       <span class="stxt" id="pc-stxt">LOCAL ONLY</span>
@@ -293,6 +327,7 @@ html,body{height:100%;overflow:hidden}
   </div>
   <div class="pc-stats" id="pc-stat-bar"></div>
   <div class="pc-shell">
+    <div class="pc-sb-overlay" id="pc-sb-overlay"></div>
     <div class="pc-sidebar">
       <div class="sb-hd">SECTIONS<button class="sb-add-btn" id="btn-open-add-folder">＋</button></div>
       <div class="sb-scroll" id="pc-tree"></div>
@@ -610,7 +645,7 @@ function renderGantt(){
   mn.textContent=y+'年 '+MN[m];
   if(!projects.length){el.innerHTML='<div style="padding:12px 16px;font-size:12px;color:var(--tx3)">工事を追加すると工程表に表示されます</div>';return;}
   // ヘッダー：工事名 + 日付のみ
-  var ths='<th style="position:sticky;left:0;background:var(--s1);z-index:3;min-width:130px;border-right:1px solid var(--line)">工事名</th>';
+  var ths='<th style="position:sticky;left:0;background:var(--s1);z-index:3;width:120px;min-width:120px;max-width:120px;border-right:1px solid var(--line)">工事名</th>';
   for(var d=1;d<=days;d++){
     var dow=new Date(y,m,d).getDay();
     var isT=d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();
@@ -916,7 +951,7 @@ function renderProgTable(){
   }
 
   // ヘッダー行：工事名 + タスク名input列
-  var ths='<th style="position:sticky;left:0;background:var(--s1);z-index:3;min-width:130px;border-right:1px solid var(--line)">工事名</th>';
+  var ths='<th style="position:sticky;left:0;background:var(--s1);z-index:3;width:120px;min-width:120px;max-width:120px;border-right:1px solid var(--line)">工事名</th>';
   for(var tc=0;tc<taskCols;tc++){
     var tname=taskNames[tc]||'';
     ths+='<th class="th-task" data-tc="'+tc+'"><input class="task-name-inp" data-tc="'+tc+'" value="'+esc(tname)+'" placeholder="タスク'+(tc+1)+'" maxlength="20"></th>';
@@ -1492,6 +1527,21 @@ function pad(n){return String(n).padStart(2,'0');}
 document.getElementById('btn-open-user').addEventListener('click',function(){
   document.getElementById('i-user').value=getUser();openOv('ov-user');
 });
+// ── スマホ サイドバー開閉 ──
+(function(){
+  var menuBtn=document.getElementById('sp-menu-btn');
+  var sidebar=document.querySelector('.pc-sidebar');
+  var overlay=document.getElementById('pc-sb-overlay');
+  if(!menuBtn)return;
+  function openSb(){sidebar.classList.add('sp-open');overlay.classList.add('sp-open');}
+  function closeSb(){sidebar.classList.remove('sp-open');overlay.classList.remove('sp-open');}
+  menuBtn.addEventListener('click',openSb);
+  overlay.addEventListener('click',closeSb);
+  // 工事選択時にサイドバーを閉じる
+  var origPcOpen=pcOpenProject;
+  pcOpenProject=function(pid,fid){origPcOpen(pid,fid);if(window.innerWidth<=640)closeSb();};
+})();
+
 document.getElementById('btn-open-setup').addEventListener('click',function(){
   // 保存済み設定を読み込み
   var saved=JSON.parse(localStorage.getItem('kmap_gdrive')||'{}');
